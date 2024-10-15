@@ -7,7 +7,7 @@ const saltRounds = 10;
 
 const redirectLogin = (req, res, next) => {
   if (!req.session.userId) {
-    res.redirect("login"); // redirect to the login page
+    res.redirect("./login"); // redirect to the login page
   } else {
     next(); // move to the next middleware function
   }
