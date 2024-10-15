@@ -5,6 +5,14 @@ const mysql = require("mysql2");
 const router = express.Router();
 const saltRounds = 10;
 
+const redirectLogin = (req, res, next) => {
+  if (!req.session.userId) {
+    res.redirect("./login"); // redirect to the login page
+  } else {
+    next(); // move to the next middleware function
+  }
+};
+
 // Registration page
 router.get("/register", function (req, res, next) {
   res.render("register.ejs");
@@ -85,6 +93,9 @@ router.post("/loggedin", function (req, res, next) {
       }
 
       if (result) {
+        // Save user session if user login success
+        req.session.userId = req.body.username;
+
         res.send("Success, welcome back!");
       } else {
         res.status(401).send("Login failed: Incorrect username or password");
@@ -94,7 +105,7 @@ router.post("/loggedin", function (req, res, next) {
 });
 
 // Get user list
-router.get("/list", function (req, res, next) {
+router.get("/list", redirectLogin, function (req, res, next) {
   const sql = "SELECT username, first_name, last_name, email FROM users";
 
   db.query(sql, function (err, results) {
