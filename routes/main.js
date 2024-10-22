@@ -22,12 +22,29 @@ router.get("/about", function (req, res, next) {
 
 //task 5
 //logout route
-router.get("/logout", redirectLogin, (req, res) => {
+// router.get("/logout", redirectLogin, (req, res) => {
+//   req.session.destroy((err) => {
+//     if (err) {
+//       return res.redirect("./");
+//     }
+//     res.send("you are now logged out. <a href=" + "./" + ">Home</a>");
+//   });
+// });
+
+router.get("/logout", (req, res) => {
+  // Check if the user is logged in
+  if (!req.session.userId) {
+    // If not logged in, show a message
+    return res.send("You are already logged out. <a href='./'>Home</a>");
+  }
+
+  // Destroy the session if the user is logged in
   req.session.destroy((err) => {
     if (err) {
       return res.redirect("./");
     }
-    res.send("you are now logged out. <a href=" + "./" + ">Home</a>");
+    // Inform the user they have logged out and provide a link to the home page
+    res.send("You have logged out. <a href='./'>Home</a>");
   });
 });
 
