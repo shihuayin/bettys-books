@@ -3,20 +3,138 @@
   <head>
     <title>Register for <%=shopData.shopName%></title>
     <link rel="stylesheet" type="text/css" href="/main.css" />
+    <style>
+      .error-message {
+        color: red;
+      }
+      .input-info {
+        color: gray;
+      }
+      .requirement {
+        color: red;
+      }
+      .requirement.valid {
+        color: green;
+      }
+    </style>
   </head>
   <body>
     <h1>Register for <%=shopData.shopName%></h1>
     <form method="POST" action="registered">
-      <p>First name: <input id="first" type="text" name="first" /></p>
-      <p>Last name: <input id="last" type="text" name="last" /></p>
-      <p>Email: <input id="email" type="text" name="email" /></p>
-      <p>Username: <input id="username" type="text" name="username" /></p>
+      <% if (errors.length > 0) { %>
+      <ul>
+        <% errors.forEach(function(error) { %>
+        <li class="error-message"><%= error.msg %></li>
+        <% }); %>
+      </ul>
+      <% } %>
+      <p>
+        First name:
+        <input
+          id="first"
+          type="text"
+          name="first"
+          pattern="[A-Za-z]+"
+          required
+        />
+        <br />
+        <small class="input-info">First name must contain only letters</small>
+      </p>
+      <p>
+        Last name:
+        <input id="last" type="text" name="last" pattern="[A-Za-z]+" required />
+        <br />
+        <small class="input-info">Last name must contain only letters</small>
+      </p>
+      <p>
+        Email:
+        <input id="email" type="email" name="email" required />
+        <br />
+        <small class="input-info">Please enter a valid email address</small>
+      </p>
+      <p>
+        Username:
+        <input
+          id="username"
+          type="text"
+          name="username"
+          pattern="[A-Za-z0-9]+"
+          required
+        />
+        <br />
+        <small class="input-info">
+          Username must contain only letters and numbers
+        </small>
+      </p>
       <p>
         Password:
-        <input id="password" type="password" name="password" required />
+        <input
+          id="password"
+          type="password"
+          name="password"
+          required
+        />
+        <br />
+        <ul id="password-requirements">
+          <li id="length" class="requirement">At least 8 characters</li>
+          <li id="uppercase" class="requirement">At least one uppercase letter</li>
+          <li id="lowercase" class="requirement">At least one lowercase letter</li>
+          <li id="number" class="requirement">At least one number</li>
+          <li id="special" class="requirement">At least one special character (@$!%*?&)</li>
+        </ul>
       </p>
-
       <input type="submit" value="Register" />
     </form>
+
+    <script>
+      const passwordInput = document.getElementById("password");
+      const requirements = {
+        length: document.getElementById("length"),
+        uppercase: document.getElementById("uppercase"),
+        lowercase: document.getElementById("lowercase"),
+        number: document.getElementById("number"),
+        special: document.getElementById("special"),
+      };
+
+      passwordInput.addEventListener("input", function () {
+        const value = passwordInput.value;
+
+        if (value.length >= 8) {
+          requirements.length.classList.add("valid");
+        } else {
+          requirements.length.classList.remove("valid");
+        }
+
+        if (/[A-Z]/.test(value)) {
+          requirements.uppercase.classList.add("valid");
+        } else {
+          requirements.uppercase.classList.remove("valid");
+        }
+
+
+        if (/[a-z]/.test(value)) {
+          requirements.lowercase.classList.add("valid");
+        } else {
+          requirements.lowercase.classList.remove("valid");
+        }
+
+
+        if (/[0-9]/.test(value)) {
+          requirements.number.classList.add("valid");
+        } else {
+          requirements.number.classList.remove("valid");
+        }
+
+    
+        if (/[@$!%*?&]/.test(value)) {
+          requirements.special.classList.add("valid");
+        } else {
+          requirements.special.classList.remove("valid");
+        }
+      });
+    </script>
   </body>
 </html>
+
+
+

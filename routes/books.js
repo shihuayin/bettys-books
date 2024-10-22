@@ -1,4 +1,6 @@
+// Import required modules
 const express = require("express");
+const { check, validationResult } = require("express-validator");
 const router = express.Router();
 
 // Middleware to check if the user is logged in
@@ -6,7 +8,7 @@ const redirectLogin = (req, res, next) => {
   if (!req.session.userId) {
     res.redirect("../users/login"); // redirect to the login page
   } else {
-    next(); // move to the next middleware function
+    next();
   }
 };
 
@@ -39,26 +41,43 @@ router.get("/list", redirectLogin, function (req, res, next) {
 });
 
 router.get("/addbook", redirectLogin, function (req, res, next) {
-  res.render("addbook.ejs");
+  res.render("addbook.ejs", { errors: [] });
 });
 
-router.post("/bookadded", function (req, res, next) {
-  // saving data in database
-  let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)";
-  // execute sql query
-  let newrecord = [req.body.name, req.body.price];
-  db.query(sqlquery, newrecord, (err, result) => {
-    if (err) {
-      next(err);
-    } else
-      res.send(
-        " This book is added to database, name: " +
-          req.body.name +
-          " price " +
-          req.body.price
-      );
-  });
-});
+router.post(
+  "/bookadded",
+  [
+    check("name").notEmpty().withMessage("Book name is required"),
+    check("price").isNumeric().withMessage("Price must be a number"),
+  ],
+  function (req, res, next) {
+    //  sanitizer
+    req.body.name = req.sanitize(req.body.name);
+    req.body.price = req.sanitize(req.body.price);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("addbook.ejs", { errors: errors.array() });
+    } else {
+      // saving data in database
+      let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)";
+      // execute sql query
+      let newrecord = [req.body.name, req.body.price];
+      db.query(sqlquery, newrecord, (err, result) => {
+        if (err) {
+          next(err);
+        } else {
+          res.send(
+            "This book is added to database, name: " +
+              req.body.name +
+              " price " +
+              req.body.price
+          );
+        }
+      });
+    }
+  }
+);
 
 router.get("/bargainbooks", function (req, res, next) {
   let sqlquery = "SELECT * FROM books WHERE price < 20";
