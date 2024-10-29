@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Friend's Book List</title>
+  </head>
+  <body>
+    <h1>Friend's Book List</h1>
+    <ul>
+      <% books.forEach(book => { %>
+      <li>
+        <strong><%= book.name || 'No Name' %></strong>
+        - Price: $<%= book.price || '0.00' %>
+      </li>
+      <% }); %>
+    </ul>
+    <a href="/">Back to Home</a>
+  </body>
+</html>
