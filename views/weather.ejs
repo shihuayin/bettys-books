@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather</title>
+  </head>
+  <body>
+    <h1>Check the Weather</h1>
+
+    <!-- 表单部分 -->
+    <form action="/weather" method="get">
+      <label for="city">Enter City Name:</label>
+      <input type="text" id="city" name="city" required />
+      <button type="submit">Get Weather</button>
+    </form>
+
+    <!-- 显示结果的区域 -->
+    <div id="weather-result">
+      <%- typeof weatherMessage !== 'undefined' ? weatherMessage : '' %>
+    </div>
+  </body>
+</html>
